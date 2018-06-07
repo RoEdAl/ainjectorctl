@@ -1,7 +1,8 @@
 #!/bin/bash -e
-SCRIPT_NAME="${0/*\//}"
-SCRIPT_DIR=$(dirname "$0")
-FN_SCRIPT=audio-injector-functions.sh
+
+readonly SCRIPT_NAME="${0/*\//}"
+readonly SCRIPT_DIR=$(dirname "$0")
+readonly FN_SCRIPT=audio-injector-functions.sh
 
 echoerr() {
     echo "$@" 1>&2
@@ -16,6 +17,32 @@ else
     echoerr "${SCRIPT_NAME}: Unable to find ${FN_SCRIPT} file"
     exit 1
 fi
+
+# init[-playback]
+usage_init_playback() {
+    echo "usage: ${SCRIPT_NAME} init-playback|help"
+}
+
+cmd_init_playback() {
+    if [ $# -lt 1 ]; then
+        ai_init_playback
+        return 0
+    fi
+    
+    local INIT_PARAM="$1"
+    shift
+
+    case "${INIT_PARAM}" in
+        help)
+        usage_playback_to
+        ;;
+
+        *)
+        echoerr "${SCRIPT_NAME} init-playback: Unknown parameter - ${INIT_PARAM}"
+        return 1
+        ;;
+    esac
+}
 
 # playback[-to]
 usage_playback_to() {
@@ -121,7 +148,7 @@ cmd_listen() {
 
 usage() {
     echo "usage: ${SCRIPT_NAME} command|help [...]"
-    echo ' command: playback-to, record-from, listen'
+    echo ' command: init-playback, playback-to, record-from, listen'
 }
 
 mixer_query || {
@@ -138,6 +165,9 @@ CMD=$1
 shift
 
 case "$CMD" in
+    init|init-playback)
+    cmd_init_playback "$@"
+
     playback|playback-to)
     cmd_playback_to "$@"
     ;;
