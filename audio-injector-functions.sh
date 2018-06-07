@@ -11,6 +11,11 @@ mixer() {
     mixer -q -c ${AI_MIXER} cset name="$1" "$2"
 }
 
+# init
+
+ai_init_playback() {
+}
+
 # playback
 
 ai_playback_to_lineout() {
