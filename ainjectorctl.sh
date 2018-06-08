@@ -79,7 +79,7 @@ cmd_playback_to() {
 
 usage_record_from() {
     echo "usage: ${SCRIPT_NAME} record-from input|help"
-    echo ' input: mic, line-in'
+    echo ' input: mic, line-in, off'
 }
 
 cmd_record_from() {
@@ -99,6 +99,10 @@ cmd_record_from() {
         ai_record_from_linein "$@"
         ;;
 
+        off)
+        ai_record_off "$@"
+        ;;
+
         help)
         usage_record_from
         ;;
@@ -114,7 +118,7 @@ cmd_record_from() {
 
 usage_listen() {
     echo "usage: ${SRIPT_NAME} listen input|help"
-    echo ' input: line-in, mic'
+    echo ' input: line-in, mic, off'
 }
 
 cmd_listen() {
@@ -131,6 +135,10 @@ cmd_listen() {
         
         mic)
         ai_listen_mic "$@"
+        ;;
+
+        off)
+        ai_listen_off "$@"
         ;;
         
         help)
@@ -151,7 +159,7 @@ usage() {
     echo ' command: init-playback, playback-to, record-from, listen'
 }
 
-mixer_query || {
+ai_mixer_query || {
     exit 2
 }
 
@@ -167,6 +175,7 @@ shift
 case "$CMD" in
     init|init-playback)
     cmd_init_playback "$@"
+    ;;
 
     playback|playback-to)
     cmd_playback_to "$@"
