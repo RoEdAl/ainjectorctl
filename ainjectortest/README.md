@@ -20,7 +20,7 @@ and then
 ainjectortest.sh mic
 ```
 
-Two PNG files should be created: **audio-injector-line-in.png** and **audio-injector-mic.png**.
+Two PNG files should be created: [audio-injector-line-in.png](img/audio-injector-line-in.png) and [audio-injector-mic.png](img/audio-injector-mic.png).
 
 ----
 
