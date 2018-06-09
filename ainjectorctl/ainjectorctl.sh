@@ -91,7 +91,7 @@ cmd_record_from() {
     local RECORD_IN="$1"
     shift
     case "${RECORD_IN}" in
-        mic)
+        mic|microphone)
         ai_record_from_mic "$@"
         ;;
 
@@ -133,7 +133,7 @@ cmd_listen() {
         ai_listen_linein "$@"
         ;;
         
-        mic)
+        mic|microphone)
         ai_listen_mic "$@"
         ;;
 
