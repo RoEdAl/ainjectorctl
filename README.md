@@ -1,4 +1,4 @@
-# audio-injector-utils - utilities for Audio Injector Stereo Sound Card
+# Tools for Audio Injector Stereo Sound Card
 
 Sound card info/support: [Stereo Raspberry Pi sound card](http://www.audioinjector.net/rpi-hat).
 
