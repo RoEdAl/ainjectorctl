@@ -17,6 +17,8 @@ readonly DEF_SAMPLE_RATE=48000
 
 readonly FILTER_SPECTOGRAM='showspectrumpic=s=hd720:scale=log'
 readonly FILTER_WAVEFORM='showwavespic=s=hd720'
+readonly FILTER_VOLUME='volume=18dB'
+readonly FILTER_TREMOLO='tremolo=f=1.5:d=1'
 
 declare AI_INPUT
 declare PICTURE_FILE=''
@@ -126,7 +128,7 @@ readonly -a FFMPEG_PLAY_PARAMS=(
     -hide_banner -loglevel repeat+error
     -f lavfi -i "sine=frequency=$FREQ:sample_rate=$SAMPLE_RATE"
     -f lavfi -i "sine=frequency=$(($FREQ/2)):sample_rate=$SAMPLE_RATE"
-    -filter_complex "[0:a][1:a] amerge=inputs=2 , volume=18dB , tremolo=f=1.5:d=1 [out]"
+    -filter_complex "[0:a][1:a] amerge=inputs=2 , $FILTER_VOLUME , $FILTER_TREMOLO [out]"
     -map '[out]' -f s16le -t $TEST_DURATION pipe:1
 )
 
@@ -143,7 +145,7 @@ readonly -a FFMPEG_REF_PIC_PARAMS=(
     -y -hide_banner -loglevel repeat+error
     -f lavfi -i "sine=frequency=$FREQ:sample_rate=$SAMPLE_RATE:duration=$REF_DURATION"
     -f lavfi -i "sine=frequency=$(($FREQ/2)):sample_rate=$SAMPLE_RATE:duration=$REF_DURATION"
-    -filter_complex "[0:a][1:a] amerge=inputs=2 , volume=18dB , tremolo=f=1.5:d=1 , $FILTER_SPECTOGRAM [pic]"
+    -filter_complex "[0:a][1:a] amerge=inputs=2 , $FILTER_VOLUME , $FILTER_TREMOLO , $FILTER_SPECTOGRAM [pic]"
     -map '[pic]' "$PICTURE_FILE"
 )
 
