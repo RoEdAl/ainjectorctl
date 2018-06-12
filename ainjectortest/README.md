@@ -4,19 +4,14 @@ Based on [this](//github.com/Audio-Injector/stereo-and-zero/blob/master/audio.in
 
 ----
 
-The script which plays a pulsing 10 kHz tone at high volume through the system.
-To use it, make sure you don't have speakers plugged in!
-Plug in an RCA cable from input to output (Red to Red, White to White).
-Also plug cheap headphones into the headphone jack and place them near to the Audio Injector so that the microphone can hear them.
-Lastly run the script:
+The script which plays a pulsing 10 kHz tone on left channel and pulsing 5kHz on right channel at high volume through the system.
+To use it, make sure you **don't have speakers plugged in**!
+Plug in an RCA cable from input to output (*red* to *red*, *white* to *white*).
+Also plug cheap headphones into the headphone jack and place them near to the *Audio Injector* so that the microphone can hear them.
+Lastly run the script twice:
 
 ```
 ainjectortest.sh line-in
-```
-
-and then
-
-```
 ainjectortest.sh mic
 ```
 
