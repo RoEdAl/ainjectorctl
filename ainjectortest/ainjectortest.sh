@@ -6,6 +6,7 @@ echoerr() {
 
 SCRIPT_NAME="${0/*\//}"
 SCRIPT_NAME=${SCRIPT_NAME%.sh}
+readonly SCRIPT_NAME
 
 readonly TEST_DURATION=5
 readonly INPUT_SKIP=0.8
@@ -20,6 +21,7 @@ readonly FILTER_WAVEFORM='showwavespic=s=hd720'
 declare AI_INPUT
 declare PICTURE_FILE=''
 declare AUDIO_DEVICE=$DEF_AUDIO_DEVICE
+declare ADJUST_MIXER=1
 declare SAMPLE_RATE=$DEF_SAMPLE_RATE
 declare FREQ=$DEF_FREQ
 
@@ -51,6 +53,7 @@ while getopts ":D:r:o:f:h" opt; do
     case ${opt} in
         D)
         AUDIO_DEVICE=$OPTARG
+        ADJUST_MIXER=0
         ;;
 
         r)
@@ -116,10 +119,10 @@ if [[ -z $PICTURE_FILE ]]; then
     PICTURE_FILE=audio-injector-$AI_INPUT.png
 fi
 
-declare -a -r ARECORD_PARAMS=(-q -N -M -t raw -D $AUDIO_DEVICE -c 2 -r $SAMPLE_RATE -f S16_LE -d $TEST_DURATION)
-declare -a -r APLAY_PARAMS=(-q -N -M -t raw -D  $AUDIO_DEVICE -c 2 -r $SAMPLE_RATE -f S16_LE)
+readonly -a ARECORD_PARAMS=(-q -N -M -t raw -D $AUDIO_DEVICE -c 2 -r $SAMPLE_RATE -f S16_LE -d $TEST_DURATION)
+readonly -a APLAY_PARAMS=(-q -N -M -t raw -D  $AUDIO_DEVICE -c 2 -r $SAMPLE_RATE -f S16_LE)
 
-declare -a -r FFMPEG_PLAY_PARAMS=(
+readonly -a FFMPEG_PLAY_PARAMS=(
     -hide_banner -loglevel repeat+error
     -f lavfi -i "sine=frequency=$FREQ:sample_rate=$SAMPLE_RATE"
     -f lavfi -i "sine=frequency=$(($FREQ/2)):sample_rate=$SAMPLE_RATE"
@@ -127,7 +130,7 @@ declare -a -r FFMPEG_PLAY_PARAMS=(
     -map '[out]' -f s16le -t $TEST_DURATION pipe:1
 )
 
-declare -a -r FFMPEG_PIC_PARAMS=(
+readonly -a FFMPEG_PIC_PARAMS=(
     -y -hide_banner -loglevel repeat+error -ss $INPUT_SKIP
     -f s16le -ac 2 -ar $SAMPLE_RATE -i pipe:0
     -filter_complex "[0:a] $FILTER_SPECTOGRAM [pic]"
@@ -136,7 +139,7 @@ declare -a -r FFMPEG_PIC_PARAMS=(
 
 readonly REF_DURATION=$(echo $TEST_DURATION-$INPUT_SKIP|bc -l)
 
-declare -a -r FFMPEG_REF_PIC_PARAMS=(
+readonly -a FFMPEG_REF_PIC_PARAMS=(
     -y -hide_banner -loglevel repeat+error
     -f lavfi -i "sine=frequency=$FREQ:sample_rate=$SAMPLE_RATE:duration=$REF_DURATION"
     -f lavfi -i "sine=frequency=$(($FREQ/2)):sample_rate=$SAMPLE_RATE:duration=$REF_DURATION"
@@ -148,30 +151,30 @@ sine_playback() {
     ffmpeg "${FFMPEG_PLAY_PARAMS[@]}" | aplay "${APLAY_PARAMS[@]}"
 }
 
-generate_picture() {
+draw_picture() {
     arecord "${ARECORD_PARAMS[@]}" | ffmpeg "${FFMPEG_PIC_PARAMS[@]}"
 }
 
-generate_ref_picture() {
+draw_ref_picture() {
     ffmpeg "${FFMPEG_REF_PIC_PARAMS[@]}"
 }
 
 case $AI_INPUT in
     line-in|mic)
-    # Mixer settings
-
-    audioinjectorctl listen off
-    audioinjectorctl playback-to line-out
-    audioinjectorctl record-from $AI_INPUT
+    if [[ $ADJUST_MIXER -eq 1 ]]; then
+        # Mixer settings
+        audioinjectorctl listen off
+        audioinjectorctl playback-to line-out
+        audioinjectorctl record-from $AI_INPUT
+    fi
 
     # Playback & record
-
     sine_playback &
-    generate_picture
+    draw_picture
     wait
     ;;
 
     ref)
-    generate_ref_picture
+    draw_ref_picture
     ;;
 esac
