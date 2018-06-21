@@ -43,7 +43,7 @@ ai_mixer_script() {
 # init
 
 ai_init_playback() {
-    (
+    {
        ai_cset "$AI_MASTER_PLAYBACK_VOLUME" 121
        ai_cset "$AI_MASTER_PLAYBACK_ZC_SWITCH" off
        ai_cset "$AI_AI_CAPTURE_VOLUME" 23
@@ -58,79 +58,79 @@ ai_init_playback() {
        ai_cset "$AI_OUTPUT_MIXER_MIC_SIDETONE_SWITCH" off
        ai_cset "$AI_OUTPUT_MIXER_HIFI_PLAYBACK_SWITCH" on
        ai_cset "$AI_INPUT_MUX" "Line In"
-    ) | ai_mixer_script
+    } | ai_mixer_script
 }
 
 ai_listen_linein() {
-    (
+    {
         ai_cset "$AI_OUTPUT_MIXER_HIFI_PLAYBACK_SWITCH" off
         ai_cset "$AI_OUTPUT_MIXER_MIC_SIDETONE_SWITCH" off
         ai_cset "$AI_OUTPUT_MIXER_LINE_BYPASS_SWITCH" on
-    ) | ai_mixer_script
+    } | ai_mixer_script
 }
 
 # playback
 
 ai_playback_to_lineout() {
-    (
+    {
         ai_cset "$AI_MASTER_PLAYBACK_VOLUME" 121
         ai_cset "$AI_MASTER_PLAYBACK_ZC_SWITCH" off
         ai_cset "$AI_SIDETONE_PLAYBACK_VOLUME" 0
         ai_cset "$AI_OUTPUT_MIXER_LINE_BYPASS_SWITCH" off
         ai_cset "$AI_OUTPUT_MIXER_MIC_SIDETONE_SWITCH" off
         ai_cset "$AI_OUTPUT_MIXER_HIFI_PLAYBACK_SWITCH" on
-    ) | ai_mixer_script
+    } | ai_mixer_script
 }
 
 # record
 
 ai_record_from_linein() {
-    (
+    {
         ai_cset "$AI_LINE_CAPTURE_SWITCH" on
         ai_cset "$AI_MIC_CAPTURE_SWITCH" off
         ai_cset "$AI_INPUT_MUX" "Line In"
         ai_cset "$AI_AI_CAPTURE_VOLUME" 23
-    ) | ai_mixer_script
+    } | ai_mixer_script
 }
 
 ai_record_from_mic() {
-    (
+    {
         ai_cset "$AI_LINE_CAPTURE_SWITCH" off
         ai_cset "$AI_MIC_CAPTURE_SWITCH" on
         ai_cset "$AI_INPUT_MUX" "Mic"
         ai_cset "$AI_AI_CAPTURE_VOLUME" 23
         ai_cset "$AI_MIC_BOOST_VOLUME" 1
-    ) | ai_mixer_script
+    } | ai_mixer_script
 }
 
 ai_record_off() {
-    (
+    {
         ai_cset "$AI_LINE_CAPTURE_SWITCH" off
         ai_cset "$AI_MIC_CAPTURE_SWITCH" off
-    ) | ai_mixer_script
+    } | ai_mixer_script
 }
 
 # listen/monitor
 
 ai_listen_linein() {
-    (
+    {
         ai_cset "$AI_OUTPUT_MIXER_HIFI_PLAYBACK_SWITCH" off
         ai_cset "$AI_OUTPUT_MIXER_MIC_SIDETONE_SWITCH" off
         ai_cset "$AI_OUTPUT_MIXER_LINE_BYPASS_SWITCH" on
-    ) | ai_mixer_script
+    } | ai_mixer_script
 }
 
 ai_listen_mic() {
-    (
+    {
         ai_cset "$AI_OUTPUT_MIXER_HIFI_PLAYBACK_SWITCH" off
         ai_cset "$AI_OUTPUT_MIXER_LINE_BYPASS_SWITCH" off
         ai_cset "$AI_OUTPUT_MIXER_MIC_SIDETONE_SWITCH" on
-    ) | ai_mixer_script
+    } | ai_mixer_script
 }
 
 ai_listen_off() {
-    (
+    {
         ai_cset "$AI_OUTPUT_MIXER_LINE_BYPASS_SWITCH" off
         ai_cset "$AI_OUTPUT_MIXER_MIC_SIDETONE_SWITCH" off
-    ) | ai_mixer_script
+    } | ai_mixer_script
 }
