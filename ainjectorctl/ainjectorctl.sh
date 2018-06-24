@@ -9,10 +9,10 @@ echoerr() {
 }
 
 # include functions
-if [ -f /usr/share/audio-injector/${FN_SCRIPT} ]; then
-    . /usr/share/audio-injector/${FN_SCRIPT}
-elif [ -f ${SCRIPT_DIR}/${FN_SCRIPT} ]; then
+if [ -f ${SCRIPT_DIR}/${FN_SCRIPT} ]; then
     . ${SCRIPT_DIR}/${FN_SCRIPT}
+elif [ -f /usr/share/audio-injector/${FN_SCRIPT} ]; then
+    . /usr/share/audio-injector/${FN_SCRIPT}
 else
     echoerr "${SCRIPT_NAME}: Unable to find ${FN_SCRIPT} file"
     exit 1
@@ -155,9 +155,30 @@ cmd_listen() {
 # ainjectorctl
 
 usage() {
-    echo "usage: ${SCRIPT_NAME} command|help [...]"
-    echo ' command: init-playback, playback-to, record-from, listen'
+    echo "usage: ${SCRIPT_NAME} [-s] command|help [...]"
+    echo '    command: init-playback, playback-to, record-from, listen'
+    echo '    -s : display script only, do not touch mixer'
 }
+
+while getopts ":sh" opt; do
+    case $opt in
+        s)
+        AI_DEBUG=1
+        ;;
+
+        h)
+        usage
+        exit 0
+        ;;
+
+        \?)
+        echoerr "Invalid option: -$OPTARG"
+        exit 3
+        ;;
+    esac
+done
+
+shift $((OPTIND-1))
 
 ai_mixer_query || {
     exit 2

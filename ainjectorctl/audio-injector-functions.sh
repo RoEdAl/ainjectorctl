@@ -2,6 +2,7 @@
 # Audio Injector mixer functions
 #
 
+AI_DEBUG=0
 
 readonly AI_DEVICE=hw:audioinjectorpi
 
@@ -25,7 +26,9 @@ readonly AI_INPUT_MUX='Input Mux'
 # internal mixer routines
 
 ai_mixer_query() {
-    amixer -q -D ${AI_DEVICE} scontents > /dev/null
+    if [[ $AI_DEBUG -ne 1 ]]; then
+        amixer -q -D ${AI_DEVICE} scontents > /dev/null
+    fi
 }
 
 ai_cset() {
@@ -33,11 +36,19 @@ ai_cset() {
 }
 
 ai_mixer() {
-    amixer -q -D ${AI_DEVICE} cset name="$1" "$2"
+    if [[ $AI_DEBUG -eq 1 ]]; then
+        amixer -D ${AI_DEVICE} cset name="$1" "$2"
+    else
+        amixer -q -D ${AI_DEVICE} cset name="$1" "$2"
+    fi
 }
 
 ai_mixer_script() {
-    amixer -q -D ${AI_DEVICE} -s
+    if [[ $AI_DEBUG -eq 1 ]]; then
+        cat
+    else
+        amixer -q -D ${AI_DEVICE} -s
+    fi
 }
 
 # init
