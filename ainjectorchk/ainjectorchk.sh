@@ -4,21 +4,26 @@ echoerr() {
     echo "$@" 1>&2
 }
 
-readonly ID_FILE=/sys/devices/platform/soc/soc:sound/sound/card0/id
+readonly SOC_SOUND=/sys/devices/platform/soc/soc:sound/sound
 
 is_audioinjector_installed() {
+    local scard
+    local scard_id
 
-    if [[ ! -s $ID_FILE ]]; then
-        echoerr Sound card not found.
-        return 2
-    fi
+    for scard in ${SOC_SOUND}/card*; do
+        if [[ ! -s ${scard}/id ]]; then
+            continue
+        fi
 
-    local SOUND_CARD_ID=$(cat $ID_FILE)
+        scard_id=$(cat ${scard}/id)
 
-    if [[ $SOUND_CARD_ID -ne audioinjectorpi ]]; then
-        echoerr Another sound card installed -  $SOUND_CARD_ID.
-        return 1
-    fi
+        if [[ ${scard_id} -eq audioinjectorpi ]]; then
+            return 0
+        fi
+    done
+
+    echoerr 'Sound card not found'
+    return 1
 }
 
 is_audioinjector_installed
